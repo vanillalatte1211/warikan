@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+<title>交通費精算</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+  th, td { border: 1px solid #999; padding: 6px; text-align: center; }
+  th { background: #f0f0f0; }
+  input[type="number"] { width: 90%; font-size: 16px; }
+  .input { background: #ffecec; }
+  .auto { color: blue; font-weight: bold; }
+</style>
+
+</head>
+
+<body>
+
+<h2>① 交通費精算</h2>
+
+<!-- 基本情報 -->
+<table>
+<tr><th>平均燃費 (km/L)</th><td><input class="input" id="fuel" type="number" step="0.1"></td></tr>
+<tr><th>ガソリン代 (円/L)</th><td><input class="input" id="gas" type="number"></td></tr>
+</table>
+
+<!-- ルート -->
+<table>
+<tr><th>走行距離 (km)</th><th>有料道路 (円)</th></tr>
+<tr><td><input class="dist input" type="number" step="0.1"></td><td><input class="toll input" type="number"></td></tr>
+<tr><td><input class="dist input" type="number" step="0.1"></td><td><input class="toll input" type="number"></td></tr>
+<tr><td><input class="dist input" type="number" step="0.1"></td><td><input class="toll input" type="number"></td></tr>
+<tr><td><input class="dist input" type="number" step="0.1"></td><td><input class="toll input" type="number"></td></tr>
+<tr><td><input class="dist input" type="number" step="0.1"></td><td><input class="toll input" type="number"></td></tr>
+<tr><td><input class="dist input" type="number" step="0.1"></td><td><input class="toll input" type="number"></td></tr>
+</table>
+
+<button onclick="calc()">計算</button>
+
+<!-- 計算結果 -->
+<table>
+<tr><th>総走行距離</th><td class="auto" id="totalKm">-</td></tr>
+<tr><th>使用燃料 (L)</th><td class="auto" id="usedFuel">-</td></tr>
+<tr><th>ガソリン代合計</th><td class="auto" id="gasTotal">-</td></tr>
+<tr><th>有料道路合計</th><td class="auto" id="tollTotal">-</td></tr>
+<tr><th>総合計</th><td class="auto" id="grandTotal">-</td></tr>
+</table>
+
+<!-- 人数割 -->
+<table>
+<tr>
+  <th>役割</th>
+  <th>人数</th>
+  <th>1人あたり</th>
+</tr>
+<tr>
+  <td>運転手</td>
+  <td><input id="driverCount" class="input" type="number" value="1"></td>
+  <td class="auto" id="driverPay">-</td>
+</tr>
+<tr>
+  <td>同乗者</td>
+  <td><input id="passCount" class="input" type="number" value="3"></td>
+  <td class="auto" id="passPay">-</td>
+</tr>
+</table>
+
+<script>
+function ceil(num, digit) {
+  const pow = Math.pow(10, digit);
+  return Math.ceil(num * pow) / pow;
+}
+
+function calc() {
+  const fuel = Number(document.getElementById("fuel").value);
+  const gas = Number(document.getElementById("gas").value);
+
+  let totalKm = 0;
+  document.querySelectorAll(".dist").forEach(d => totalKm += Number(d.value || 0));
+
+  let tollTotal = 0;
+  document.querySelectorAll(".toll").forEach(t => tollTotal += Number(t.value || 0));
+
+  // ⑤ 走行距離 ÷ 燃費（小数点2切り上げ）
+  const usedFuel = ceil(totalKm / fuel, 2);
+
+  // ⑥ 燃料 × ガソリン代（小数点1切り上げ）
+  const gasTotal = ceil(usedFuel * gas, 1);
+
+  const grand = gasTotal + tollTotal;
+
+  document.getElementById("totalKm").textContent = totalKm.toFixed(1) + " km";
+  document.getElementById("usedFuel").textContent = usedFuel + " L";
+  document.getElementById("gasTotal").textContent = gasTotal.toLocaleString() + " 円";
+  document.getElementById("tollTotal").textContent = tollTotal.toLocaleString() + " 円";
+  document.getElementById("grandTotal").textContent = grand.toLocaleString() + " 円";
+
+ // ⑦ 人数割（運転手が端数を負担）
+const drivers = Number(document.getElementById("driverCount").value);
+const passengers = Number(document.getElementById("passCount").value);
+const people = drivers + passengers;
+
+const roundUnit = 10; // ← 100円単位（10なら10円）
+
+// 同乗者1人あたり（きりのいい数字）
+const passengerPay =
+  Math.ceil(grand / people / roundUnit) * roundUnit;
+
+// 同乗者合計
+const passengerTotal = passengerPay * passengers;
+
+// 運転手は端数をすべて持つ
+const driverPay = grand - passengerTotal;
+
+document.getElementById("driverPay").textContent =
+  driverPay.toLocaleString() + " 円";
+document.getElementById("passPay").textContent =
+  passengerPay.toLocaleString() + " 円";
+}
+</script>
+
+<h2>② 食費の割り勘</h2>
+
+<!-- 割り勘対象 -->
+<table>
+<tr>
+  <th>項目</th>
+  <th>金額を入力</th>
+</tr>
+<tr><td></td><td><input class="food input" type="number"></td></tr>
+<tr><td></td><td><input class="food input" type="number"></td></tr>
+<tr><td></td><td><input class="food input" type="number"></td></tr>
+<tr><td></td><td><input class="food input" type="number"></td></tr>
+<tr>
+  <th>人数</th>
+  <td><input id="foodPeople" class="input" type="number" value="4"></td>
+</tr>
+</table>
+
+<button onclick="calcFood()">計算</button>
+
+<table>
+<tr>
+  <th>一人当たりの金額</th>
+  <td class="auto" id="foodPer">-</td>
+</tr>
+</table>
+
+<!-- 個別注文 -->
+<table>
+<tr>
+  <th>名前</th>
+  <th>個々の注文額</th>
+  <th>一人当たり</th>
+  <th>支払合計</th>
+</tr>
+
+<tr>
+  <td>ゴンちゃん</td>
+  <td><input class="personal input" type="number"></td>
+  <td class="auto perCell"></td>
+  <td class="auto totalCell"></td>
+</tr>
+<tr>
+  <td>みかにゃん</td>
+  <td><input class="personal input" type="number"></td>
+  <td class="auto perCell"></td>
+  <td class="auto totalCell"></td>
+</tr>
+<tr>
+  <td>はなちゃん</td>
+  <td><input class="personal input" type="number"></td>
+  <td class="auto perCell"></td>
+  <td class="auto totalCell"></td>
+</tr>
+<tr>
+  <td>リカ</td>
+  <td><input class="personal input" type="number"></td>
+  <td class="auto perCell"></td>
+  <td class="auto totalCell"></td>
+</tr>
+</table>
+
+<script>
+function calcFood() {
+  // 割り勘対象合計
+  let sum = 0;
+  document.querySelectorAll(".food").forEach(f => {
+    sum += Number(f.value || 0);
+  });
+
+  const people = Number(document.getElementById("foodPeople").value);
+  if (people <= 0) return;
+
+  // 一人当たり
+  const per = Math.ceil(sum / people);
+  document.getElementById("foodPer").textContent =
+    per.toLocaleString() + " 円";
+
+  // 各人の計算
+  document.querySelectorAll(".personal").forEach((p, i) => {
+    const personal = Number(p.value || 0);
+    const total = personal + per;
+
+    document.querySelectorAll(".perCell")[i].textContent =
+      per.toLocaleString() + " 円";
+
+    document.querySelectorAll(".totalCell")[i].textContent =
+      total.toLocaleString() + " 円";
+  });
+}
+
+</script>
+
+</body>
+</html>
