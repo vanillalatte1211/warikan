@@ -56,13 +56,13 @@ button:active {
 
 <!-- 基本情報 -->
 <table>
-<tr><th>平均燃費 (km/L)</th><td><input class="input" id="fuel" type="number" step="0.1"></td></tr>
-<tr><th>ガソリン代 (円/L)</th><td><input class="input" id="gas" type="number"></td></tr>
+<tr><th>①１リッターあたりの燃費 (km/L)</th><td><input class="input" id="fuel" type="number" step="0.1"></td></tr>
+<tr><th>②ガソリン代　１リッター単価 (円/L)</th><td><input class="input" id="gas" type="number"></td></tr>
 </table>
 
 <!-- ルート -->
 <table>
-<tr><th>走行距離 (km)</th><th>有料道路 (円)</th></tr>
+<tr><th>③走行（移動）距離 (km)</th><th>④有料道路（高速料金）／駐車場代、他 (円)</th></tr>
 <tr><td><input class="dist input" type="number" step="0.1"></td><td><input class="toll input" type="number"></td></tr>
 <tr><td><input class="dist input" type="number" step="0.1"></td><td><input class="toll input" type="number"></td></tr>
 <tr><td><input class="dist input" type="number" step="0.1"></td><td><input class="toll input" type="number"></td></tr>
@@ -71,17 +71,13 @@ button:active {
 <tr><td><input class="dist input" type="number" step="0.1"></td><td><input class="toll input" type="number"></td></tr>
 </table>
 
-<button onclick="calc()">計算</button>
-<button class="reset-btn" onclick="resetTraffic()">リセット</button>
-
-
 <!-- 計算結果 -->
 <table>
-<tr><th>総走行距離</th><td class="auto" id="totalKm">-</td></tr>
-<tr><th>使用燃料 (L)</th><td class="auto" id="usedFuel">-</td></tr>
-<tr><th>ガソリン代合計</th><td class="auto" id="gasTotal">-</td></tr>
-<tr><th>有料道路合計</th><td class="auto" id="tollTotal">-</td></tr>
-<tr><th>総合計</th><td class="auto" id="grandTotal">-</td></tr>
+<tr><th>総走行距離（③の合計）</th><td class="auto" id="totalKm">-</td></tr>
+<tr><th>⑤使用燃料 (L)＝③総走行距離 ÷ ①１リッターあたりの燃費（小数点2切り上げ）</th><td class="auto" id="usedFuel">-</td></tr>
+<tr><th>⑥ガソリン代＝⑤使用燃料 × ②ガソリン１リッター単価（小数点1切り上げ）</th><td class="auto" id="gasTotal">-</td></tr>
+<tr><th>⑦有料道路（高速）／駐車場代、他（④の合計）</th><td class="auto" id="tollTotal">-</td></tr>
+<tr><th>総合計（⑥+⑦）</th><td class="auto" id="grandTotal">-</td></tr>
 </table>
 
 <!-- 人数割 -->
@@ -103,6 +99,9 @@ button:active {
 </tr>
 </table>
 
+<button onclick="calc()">計算</button>
+<button class="reset-btn" onclick="resetTraffic()">リセット</button>
+
 <script>
 function ceil(num, digit) {
   const pow = Math.pow(10, digit);
@@ -119,8 +118,8 @@ function calc() {
   let tollTotal = 0;
   document.querySelectorAll(".toll").forEach(t => tollTotal += Number(t.value || 0));
 
-  // ⑤ 走行距離 ÷ 燃費（小数点2切り上げ）
-  const usedFuel = ceil(totalKm / fuel, 2);
+  // ⑤ 走行距離 ÷ 燃費（小数点1切り上げ）
+  const usedFuel = ceil(totalKm / fuel, 1);
 
   // ⑥ 燃料 × ガソリン代（小数点1切り上げ）
   const gasTotal = ceil(usedFuel * gas, 1);
@@ -179,26 +178,22 @@ function resetTraffic() {
 <!-- 割り勘対象 -->
 <table>
 <tr>
-  <th>項目</th>
+  <th>割勘対象メニュー</th>
   <th>金額を入力</th>
 </tr>
-<tr><td></td><td><input class="food input" type="number"></td></tr>
-<tr><td></td><td><input class="food input" type="number"></td></tr>
-<tr><td></td><td><input class="food input" type="number"></td></tr>
-<tr><td></td><td><input class="food input" type="number"></td></tr>
+<tr><td>メニュー１</td><td><input class="food input" type="number"></td></tr>
+<tr><td>メニュー２</td><td><input class="food input" type="number"></td></tr>
+<tr><td>メニュー３</td><td><input class="food input" type="number"></td></tr>
+<tr><td>メニュー４</td><td><input class="food input" type="number"></td></tr>
 <tr>
   <th>人数</th>
   <td><input id="foodPeople" class="input" type="number" value="4"></td>
 </tr>
 </table>
 
-<button onclick="calcFood()">計算</button>
-<button class="reset-btn" onclick="resetFood()">リセット</button>
-
-
 <table>
 <tr>
-  <th>一人当たりの金額</th>
+  <th>一人当たりの割勘額</th>
   <td class="auto" id="foodPer">-</td>
 </tr>
 </table>
@@ -208,7 +203,7 @@ function resetTraffic() {
 <tr>
   <th>名前</th>
   <th>個々の注文額</th>
-  <th>一人当たり</th>
+  <th>一人当たりの割勘額</th>
   <th>支払合計</th>
 </tr>
 
@@ -237,6 +232,9 @@ function resetTraffic() {
   <td class="auto totalCell"></td>
 </tr>
 </table>
+    
+<button onclick="calcFood()">計算</button>
+<button class="reset-btn" onclick="resetFood()">リセット</button>
 
 <script>
 function calcFood() {
