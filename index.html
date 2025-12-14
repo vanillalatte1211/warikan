@@ -20,8 +20,34 @@ if ("serviceWorker" in navigator) {
   input[type="number"] { width: 90%; font-size: 16px; }
   .input { background: #ffecec; }
   .auto { color: blue; font-weight: bold; }
-</style>
+button {
+  width: 100%;
+  padding: 18px;
+  font-size: 22px;
+  font-weight: bold;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+button:active {
+  background-color: #3e8e41;
+  transform: scale(0.98);
+}
 
+.reset-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 20px;
+  background-color: #85cdf9;
+  color: #333;
+  border: none;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+</style>
 </head>
 
 <body>
@@ -46,6 +72,8 @@ if ("serviceWorker" in navigator) {
 </table>
 
 <button onclick="calc()">計算</button>
+<button class="reset-btn" onclick="resetTraffic()">リセット</button>
+
 
 <!-- 計算結果 -->
 <table>
@@ -127,6 +155,23 @@ document.getElementById("driverPay").textContent =
 document.getElementById("passPay").textContent =
   passengerPay.toLocaleString() + " 円";
 }
+
+function resetTraffic() {
+  // 入力欄クリア
+  document.querySelectorAll(
+    '#fuel, #gas, .dist, .toll, #driverCount, #passCount'
+  ).forEach(el => el.value = '');
+
+  // 初期値に戻す
+  document.getElementById("driverCount").value = 1;
+  document.getElementById("passCount").value = 3;
+
+  // 表示リセット
+  ["totalKm", "usedFuel", "gasTotal", "tollTotal", "grandTotal",
+   "driverPay", "passPay"]
+  .forEach(id => document.getElementById(id).textContent = '-');
+}
+    
 </script>
 
 <h2>② 食費の割り勘</h2>
@@ -148,6 +193,8 @@ document.getElementById("passPay").textContent =
 </table>
 
 <button onclick="calcFood()">計算</button>
+<button class="reset-btn" onclick="resetFood()">リセット</button>
+
 
 <table>
 <tr>
@@ -166,25 +213,25 @@ document.getElementById("passPay").textContent =
 </tr>
 
 <tr>
-  <td>ゴンちゃん</td>
+  <td>対象者Ａ</td>
   <td><input class="personal input" type="number"></td>
   <td class="auto perCell"></td>
   <td class="auto totalCell"></td>
 </tr>
 <tr>
-  <td>みかにゃん</td>
+  <td>対象者Ｂ</td>
   <td><input class="personal input" type="number"></td>
   <td class="auto perCell"></td>
   <td class="auto totalCell"></td>
 </tr>
 <tr>
-  <td>はなちゃん</td>
+  <td>対象者Ｃ</td>
   <td><input class="personal input" type="number"></td>
   <td class="auto perCell"></td>
   <td class="auto totalCell"></td>
 </tr>
 <tr>
-  <td>リカ</td>
+  <td>対象者Ｄ</td>
   <td><input class="personal input" type="number"></td>
   <td class="auto perCell"></td>
   <td class="auto totalCell"></td>
@@ -219,6 +266,21 @@ function calcFood() {
       total.toLocaleString() + " 円";
   });
 }
+
+function resetFood() {
+  // 割り勘対象・個別注文をクリア
+  document.querySelectorAll('.food, .personal')
+    .forEach(el => el.value = '');
+
+  // 人数を初期値へ
+  document.getElementById("foodPeople").value = 4;
+
+  // 表示クリア
+  document.getElementById("foodPer").textContent = '-';
+  document.querySelectorAll('.perCell, .totalCell')
+    .forEach(el => el.textContent = '');
+}
+
 
 </script>
 
