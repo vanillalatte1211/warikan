@@ -56,8 +56,8 @@ button:active {
 
 <!-- 基本情報 -->
 <table>
-<tr><th>①１リッターあたりの<br>燃費 (km/L)</th><td><input class="input" id="fuel" type="number" step="0.1"></td></tr>
-<tr><th>②ガソリン代<br>１リッター単価 (円/L)</th><td><input class="input" id="gas" type="number"></td></tr>
+<tr><th>①1Lの燃費<br> (km/L)</th><td><input class="input" id="fuel" type="number" step="0.1"></td></tr>
+<tr><th>②ガソリン代<br>単価 (円/L)</th><td><input class="input" id="gas" type="number"></td></tr>
 </table>
 
 <!-- ルート -->
@@ -73,11 +73,11 @@ button:active {
 
 <!-- 計算結果 -->
 <table>
-<tr><th>総走行距離（③）</th><td class="auto" id="totalKm">-</td></tr>
-<tr><th>⑤使用燃料 (L)<br><font size="2">③総走行距離 ÷ ①1Lの燃費<br>※小数点2切り上げ</font></th><td class="auto" id="usedFuel">-</td></tr>
-<tr><th>⑥ガソリン代<br><font size="2">⑤使用燃料 × ②ｶﾞｿﾘﾝ1Lの単価<br>※小数点1切り上げ</font></th><td class="auto" id="gasTotal">-</td></tr>
-<tr><th>⑦有料道路（高速）<br>駐車場代、他（④）</th><td class="auto" id="tollTotal">-</td></tr>
-<tr><th>総合計（⑥+⑦）</th><td class="auto" id="grandTotal">-</td></tr>
+<tr><th>⑤総走行距離<font size="2">（③の合計）</font></th><td class="auto" id="totalKm">-</td></tr>
+<tr><th>⑥使用燃料 (L)<br><font size="2">⑤総走行距離 ÷ ①1Lの燃費<br>※小数点2切り上げ</font></th><td class="auto" id="usedFuel">-</td></tr>
+<tr><th>⑦ガソリン代<br><font size="2">⑥使用燃料 × ②ｶﾞｿﾘﾝ1Lの単価<br>※小数点1切り上げ</font></th><td class="auto" id="gasTotal">-</td></tr>
+<tr><th>⑧有料道路＆高速代<br>駐車場、他<font size="2">（④の合計）</font></th><td class="auto" id="tollTotal">-</td></tr>
+<tr><th>総合計（⑦+⑧）</th><td class="auto" id="grandTotal">-</td></tr>
 </table>
 
 <!-- 人数割 -->
@@ -193,7 +193,7 @@ function resetTraffic() {
 
 <table>
 <tr>
-  <th>一人当たりの割勘額</th>
+  <th>一人あたりの割勘額</th>
   <td class="auto" id="foodPer">-</td>
 </tr>
 </table>
@@ -203,7 +203,7 @@ function resetTraffic() {
 <tr>
   <th>名前</th>
   <th>個々の注文額</th>
-  <th>一人当たりの割勘額</th>
+  <th>割勘額</th>
   <th>支払合計</th>
 </tr>
 
