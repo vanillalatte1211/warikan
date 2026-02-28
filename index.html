@@ -199,7 +199,7 @@ function resetTraffic() {
 </table>
 
 <!-- 個別注文 -->
-<table>
+<table id="personalTable">
 <tr>
   <th>名前</th>
   <th>注文①</th>
@@ -268,19 +268,19 @@ function calcFood() {
   if (people <= 0) return;
 
   const per = Math.ceil(sum / people);
+
   document.getElementById("foodPer").textContent =
     per.toLocaleString() + " 円";
 
-  // 各行ごとの処理
-  const rows = document.querySelectorAll("table:nth-of-type(6) tr");
+  // 個別注文テーブルを取得
+  const rows = document.querySelectorAll("#personalTable tr");
 
   rows.forEach((row, index) => {
-    if (index === 0) return; // ヘッダー除外
+    if (index === 0) return;
 
-    const inputs = row.querySelectorAll(".personal");
     let personalTotal = 0;
 
-    inputs.forEach(input => {
+    row.querySelectorAll(".personal").forEach(input => {
       personalTotal += Number(input.value || 0);
     });
 
