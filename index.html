@@ -257,6 +257,7 @@ function resetTraffic() {
 
 <script>
 function calcFood() {
+
   // 割り勘対象合計
   let sum = 0;
   document.querySelectorAll(".food").forEach(f => {
@@ -266,20 +267,29 @@ function calcFood() {
   const people = Number(document.getElementById("foodPeople").value);
   if (people <= 0) return;
 
-  // 一人当たり
   const per = Math.ceil(sum / people);
   document.getElementById("foodPer").textContent =
     per.toLocaleString() + " 円";
 
-  // 各人の計算
-  document.querySelectorAll(".personal").forEach((p, i) => {
-    const personal = Number(p.value || 0);
-    const total = personal + per;
+  // 各行ごとの処理
+  const rows = document.querySelectorAll("table:nth-of-type(6) tr");
 
-    document.querySelectorAll(".perCell")[i].textContent =
+  rows.forEach((row, index) => {
+    if (index === 0) return; // ヘッダー除外
+
+    const inputs = row.querySelectorAll(".personal");
+    let personalTotal = 0;
+
+    inputs.forEach(input => {
+      personalTotal += Number(input.value || 0);
+    });
+
+    const total = personalTotal + per;
+
+    row.querySelector(".perCell").textContent =
       per.toLocaleString() + " 円";
 
-    document.querySelectorAll(".totalCell")[i].textContent =
+    row.querySelector(".totalCell").textContent =
       total.toLocaleString() + " 円";
   });
 }
