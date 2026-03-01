@@ -19,7 +19,24 @@ if ("serviceWorker" in navigator) {
   th { background: #f0f0f0; }
   input[type="number"] { width: 90%; font-size: 16px; }
   .input { background: #ffecec; }
-  .auto { color: blue; font-weight: bold; }
+  .auto { color: blue; font-weight: bold; }    
+    
+  .order-table th,
+  .order-table td {
+   border: 1px solid #000;
+   padding: 6px;
+   text-align: center;
+}
+        
+
+/* 対象者ごとに太枠 */
+.order-table tbody.person {
+  border: 3px solid #000;
+}
+    
+ 
+    
+    
 button {
   width: 100%;
   padding: 18px;
@@ -199,56 +216,86 @@ function resetTraffic() {
 </table>
 
 <!-- 個別注文 -->
-<table id="personalTable">
-<tr>
-  <th>名前</th>
-  <th>注文①</th>
-  <th>注文②</th>
-  <th>注文③</th>
-  <th>注文④</th>
-  <th>割勘額</th>
-  <th>支払合計</th>
-</tr>
+<table class="order-table">
+  <thead>
+    <tr>
+      <th>名前</th>
+      <th colspan="4">個々の注文額</th>
+      <th>注文小計</th>
+    </tr>
+  </thead>
 
+<!-- A -->
+<tbody class="person">
 <tr>
-  <td>対象者Ａ</td>
+  <td>対象者A</td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
-  <td class="auto perCell"></td>
-  <td class="auto totalCell"></td>
+  <td class="auto subTotal"></td>
 </tr>
+<tr>
+  <td>割勘額</td>
+  <td colspan="2" class="auto perCell"></td>
+  <td>支払合計</td>
+  <td colspan="2" class="auto totalCell"></td>
+</tr>
+</tbody>
 
+<!-- B -->
+<tbody class="person">
 <tr>
-  <td>対象者Ｂ</td>
+  <td>対象者B</td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
-  <td class="auto perCell"></td>
-  <td class="auto totalCell"></td>
+  <td class="auto subTotal"></td>
 </tr>
+<tr>
+  <td>割勘額</td>
+  <td colspan="2" class="auto perCell"></td>
+  <td>支払合計</td>
+  <td colspan="2" class="auto totalCell"></td>
+</tr>
+</tbody>
 
+<!-- C -->
+<tbody class="person">
 <tr>
-  <td>対象者Ｃ</td>
+  <td>対象者C</td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
-  <td class="auto perCell"></td>
-  <td class="auto totalCell"></td>
+  <td class="auto subTotal"></td>
 </tr>
+<tr>
+  <td>割勘額</td>
+  <td colspan="2" class="auto perCell"></td>
+  <td>支払合計</td>
+  <td colspan="2" class="auto totalCell"></td>
+</tr>
+</tbody>
 
+<!-- D -->
+<tbody class="person">
 <tr>
-  <td>対象者Ｄ</td>
+  <td>対象者D</td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
   <td><input class="personal input" type="number"></td>
-  <td class="auto perCell"></td>
-  <td class="auto totalCell"></td>
+  <td class="auto subTotal"></td>
 </tr>
+<tr>
+  <td>割勘額</td>
+  <td colspan="2" class="auto perCell"></td>
+  <td>支払合計</td>
+  <td colspan="2" class="auto totalCell"></td>
+</tr>
+</tbody>
 
 </table>
     
@@ -258,7 +305,7 @@ function resetTraffic() {
 <script>
 function calcFood() {
 
-  // 割り勘対象合計
+  // 割勘対象合計
   let sum = 0;
   document.querySelectorAll(".food").forEach(f => {
     sum += Number(f.value || 0);
@@ -272,28 +319,33 @@ function calcFood() {
   document.getElementById("foodPer").textContent =
     per.toLocaleString() + " 円";
 
-  // 個別注文テーブルを取得
   const rows = document.querySelectorAll("#personalTable tr");
 
-  rows.forEach((row, index) => {
-    if (index === 0) return;
+  for (let i = 1; i < rows.length; i += 2) {
 
-    let personalTotal = 0;
+    // 上段（注文入力行）
+    const orderRow = rows[i];
+    const resultRow = rows[i + 1];
 
-    row.querySelectorAll(".personal").forEach(input => {
-      personalTotal += Number(input.value || 0);
+    let subTotal = 0;
+
+    orderRow.querySelectorAll(".personal").forEach(input => {
+      subTotal += Number(input.value || 0);
     });
 
-    const total = personalTotal + per;
+    const total = subTotal + per;
 
-    row.querySelector(".perCell").textContent =
+    orderRow.querySelector(".subTotal").textContent =
+      subTotal.toLocaleString() + " 円";
+
+    resultRow.querySelector(".perCell").textContent =
       per.toLocaleString() + " 円";
 
-    row.querySelector(".totalCell").textContent =
+    resultRow.querySelector(".totalCell").textContent =
       total.toLocaleString() + " 円";
-  });
+  }
 }
-
+    
 function resetFood() {
   // 割り勘対象・個別注文をクリア
   document.querySelectorAll('.food, .personal')
