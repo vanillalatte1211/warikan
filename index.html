@@ -17,7 +17,7 @@ if ("serviceWorker" in navigator) {
   table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
   th, td { border: 1px solid #999; padding: 6px; text-align: center; }
   th { background: #f0f0f0; }
-  input[type="number"] { width: 90%; font-size: 16px; }
+  input[type="number"] { width: 80%; font-size: 16px; }
   .input { background: #ffecec; }
   .auto { color: blue; font-weight: bold; }    
     
@@ -356,7 +356,7 @@ function resetFood() {
 
   // 表示クリア
   document.getElementById("foodPer").textContent = '-';
-  document.querySelectorAll('.perCell, .totalCell')
+  document.querySelectorAll('.perCell, .totalCell, .subTotal')
     .forEach(el => el.textContent = '');
 }
 
